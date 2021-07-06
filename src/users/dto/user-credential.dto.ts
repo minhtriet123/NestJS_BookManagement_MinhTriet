@@ -1,20 +1,23 @@
 import {
   IsEmail,
+  IsNotEmpty,
   IsString,
   Matches,
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { LoginStatus } from '../loginStatus.model';
 
 export class UserCredentialDto {
   @IsEmail()
   email: string;
 
   @IsString()
-  @MinLength(8)
+  @IsNotEmpty()
+  @MinLength(4)
   @MaxLength(32)
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: 'Password is too weak',
+    message: LoginStatus.WEAK_PASSWORD,
   })
   password: string;
 }

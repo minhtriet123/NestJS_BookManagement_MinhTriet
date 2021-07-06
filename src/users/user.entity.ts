@@ -12,11 +12,11 @@ export class User {
   password: string;
 
   @Column()
-  firstName?: string;
+  firstName: string;
 
   @Column()
-  lastName?: string;
+  lastName: string;
 
   @Column()
-  avatar?: string;
+  avatar: string;
 }
