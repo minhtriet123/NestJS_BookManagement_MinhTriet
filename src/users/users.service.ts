@@ -4,9 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { AccessTokenDto } from './dto/accessToken.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { GetProfile } from './dto/get-profile.dto';
 import { UserCredentialDto } from './dto/user-credential.dto';
 import { JwtPayload } from './jwt-payload.interface';
-import { LoginStatus } from './loginStatus.model';
+import { LoginStatus } from './loginStatus.enum';
+import { User } from './user.entity';
 import { UserRepository } from './user.repository';
 
 @Injectable()
@@ -29,5 +31,8 @@ export class UsersService {
     } else {
       throw new UnauthorizedException(LoginStatus.FAIL_LOGIN);
     }
+  }
+  async getProfile(user: User): Promise<GetProfile> {
+    return this.userRepositry.getProfile(user);
   }
 }

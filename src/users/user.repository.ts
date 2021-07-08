@@ -7,7 +7,8 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { equals } from 'class-validator';
-import { LoginStatus } from './loginStatus.model';
+import { LoginStatus } from './loginStatus.enum';
+import { GetProfile } from './dto/get-profile.dto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -39,7 +40,21 @@ export class UserRepository extends Repository<User> {
         }
       }
     } else {
-      throw new ConflictException('Password is not matched!');
+      throw new ConflictException(LoginStatus.NOT_MATCHED);
+    }
+  }
+  async getProfile(user: User): Promise<GetProfile> {
+    try {
+      const rs = await this.findOne(user);
+      const profile: GetProfile = {
+        email: rs.email,
+        firstName: rs.firstName,
+        lastName: rs.lastName,
+        avatar: rs.avatar,
+      };
+      return profile;
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 }

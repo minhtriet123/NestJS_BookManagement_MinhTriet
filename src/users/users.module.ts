@@ -12,7 +12,7 @@ import { UsersService } from './users.service';
     TypeOrmModule.forFeature([UserRepository]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret: 'JWT_SECRET',
+      secret: 'topSecret51',
       signOptions: {
         expiresIn: 3600,
       },
