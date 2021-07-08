@@ -1,8 +1,4 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-enum Roles {
-  user = 'user',
-  admin = 'admin',
-}
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
