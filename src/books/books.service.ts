@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Timestamp } from 'typeorm';
 import { Book } from './book.entity';
 import { BooksRepository } from './books.repository';
 import { CreateBookDto } from './dto/create-book.dto';
