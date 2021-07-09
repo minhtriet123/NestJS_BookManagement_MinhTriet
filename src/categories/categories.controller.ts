@@ -10,18 +10,31 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { Logger } from '@nestjs/common';
+import { GetUser } from 'src/users/get-user.decorator';
+import { User } from 'src/users/user.entity';
 
 @Controller('categories')
 @UseGuards(AuthGuard('jwt'))
 export class CategoriesController {
+  private logger = new Logger('CategoriesController');
   constructor(private categoriesService: CategoriesService) {}
   @Post('/create-category')
-  createCategory(@Body() createCategoryDto: CreateCategoryDto) {
+  createCategory(
+    @Body() createCategoryDto: CreateCategoryDto,
+    @GetUser() user: User,
+  ) {
+    this.logger.verbose(
+      `User: ${user.email} added category: ${JSON.stringify(
+        createCategoryDto,
+      )}`,
+    );
     return this.categoriesService.createCategory(createCategoryDto);
   }
 
   @Delete('/:id')
-  deleteCategory(@Param('id') id: string) {
+  deleteCategory(@Param('id') id: string, @GetUser() user: User) {
+    this.logger.verbose(`User: ${user.email} Deleted category id: ${id}`);
     return this.categoriesService.deleteCategory(id);
   }
 
@@ -29,7 +42,15 @@ export class CategoriesController {
   updateAuthor(
     @Param('id') id: string,
     @Body() editCategory: CreateCategoryDto,
+    @GetUser() user: User,
   ) {
+    this.logger.verbose(
+      `User: ${
+        user.email
+      } Update category id: ${id} with changes: ${JSON.stringify(
+        editCategory,
+      )}`,
+    );
     return this.categoriesService.updateCategory(id, editCategory);
   }
 }

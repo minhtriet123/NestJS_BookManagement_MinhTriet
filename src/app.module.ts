@@ -4,22 +4,34 @@ import { UsersModule } from './users/users.module';
 import { BooksModule } from './books/books.module';
 import { AuthorsModule } from './authors/authors.module';
 import { CategoriesModule } from './categories/categories.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     UsersModule,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      username: 'postgres',
-      password: 'postgres',
-      database: 'book-management',
-      autoLoadEntities: true,
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        return {
+          type: 'postgres',
+          host: configService.get('HOST_DB'),
+          port: configService.get('PORT_DB'),
+          username: configService.get('USERNAME_DB'),
+          password: configService.get('PASSWORD_DB'),
+          database: configService.get('DATABASE_DB'),
+          autoLoadEntities: true,
+          synchronize: true,
+        };
+      },
     }),
     BooksModule,
     AuthorsModule,
     CategoriesModule,
+    ConfigModule.forRoot({
+      envFilePath: '.development.env',
+      isGlobal: true,
+    }),
   ],
   controllers: [],
   providers: [],
