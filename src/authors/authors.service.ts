@@ -13,16 +13,13 @@ export class AuthorsService {
     return this.authorRepository.createAuthor(createAuthorDto);
   }
   async deleteAuthor(id: string) {
-    const result = await this.authorRepository.delete({ id });
-    if (result.affected === 0)
-      throw new NotFoundException(`No author with ID ${id} is not found`);
-    return result;
+    const author = await this.authorRepository.findOne({ id });
+    if (!author) throw new NotFoundException(`No author id ${id} was found`);
+    return this.authorRepository.delete({ id });
   }
   async updateAuthor(id: string, editAuthor: AuthorDto) {
-    const { name } = editAuthor;
     const author = await this.authorRepository.findOne({ id });
-    author.name = name;
-    await this.authorRepository.save(author);
-    return author;
+    if (!author) throw new NotFoundException(`No author was found`);
+    return await this.authorRepository.save({ ...author, ...editAuthor });
   }
 }
