@@ -15,7 +15,7 @@ export class UpdateBookDto {
 
   @IsString()
   @IsOptional()
-  price?: string;
+  price?: number;
 
   @IsString()
   @IsOptional()

@@ -17,18 +17,13 @@ import { GetBookFilterDto } from './dto/get-book-filter.dto';
 import { GetBookDto } from './dto/get-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 
-@Controller('books')
+@Controller('book-management/books')
 @UseGuards(AuthGuard('jwt'))
 export class BooksController {
   constructor(private booksService: BooksService) {}
   @Get()
-  getAllBooks(): Promise<GetBookDto[]> {
-    return this.booksService.getAllBooks();
-  }
-
-  @Get('/search')
-  getBooksByTitle(@Query('name') title: string) {
-    return this.booksService.getBooksByName(title);
+  getAllBooks(@Query('search') title: string): Promise<GetBookDto[]> {
+    return this.booksService.getAllBooks(title);
   }
 
   @Get('/filter')

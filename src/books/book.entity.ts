@@ -32,10 +32,10 @@ export class Book {
   category: Category;
 
   @Column()
-  publish_year: string;
+  publishYear: string;
 
   @Column()
-  price: string;
+  price: number;
 
   @Column({ default: '' })
   description: string;

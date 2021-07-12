@@ -3,6 +3,6 @@ export enum LoginStatus {
 
   WEAK_PASSWORD = 'Password is too weak!',
   FAIL_LOGIN = 'Please check your Username or Password',
-  EXITS_EMAIL = 'Email already exists',
+  EXISTS_EMAIL = 'Email already exists',
   NOT_MATCHED = 'Password is not matched!',
 }

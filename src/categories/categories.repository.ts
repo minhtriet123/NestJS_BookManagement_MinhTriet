@@ -1,23 +1,19 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { Category } from './category.entity';
-import { CreateCategoryDto } from './dto/create-category.dto';
+import { CategoryDto } from './dto/category.dto';
 
 @EntityRepository(Category)
 export class CategoriesRepository extends Repository<Category> {
-  async createCategory(
-    createCategoryDto: CreateCategoryDto,
-  ): Promise<CreateCategoryDto> {
+  async createCategory(createCategoryDto: CategoryDto): Promise<CategoryDto> {
     const { name } = createCategoryDto;
     const category = await this.create({
       name,
     });
     try {
-      await this.save(category);
+      return await this.save(category);
     } catch (error) {
-      throw new InternalServerErrorException();
+      return error.message;
     }
-
-    return category;
   }
 }

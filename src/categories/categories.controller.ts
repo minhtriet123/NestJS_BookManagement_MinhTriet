@@ -9,19 +9,19 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CategoriesService } from './categories.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
+import { CategoryDto } from './dto/category.dto';
 import { Logger } from '@nestjs/common';
 import { GetUser } from 'src/users/get-user.decorator';
 import { User } from 'src/users/user.entity';
 
-@Controller('categories')
+@Controller('book-management/categories')
 @UseGuards(AuthGuard('jwt'))
 export class CategoriesController {
   private logger = new Logger('CategoriesController');
   constructor(private categoriesService: CategoriesService) {}
   @Post('/create-category')
   createCategory(
-    @Body() createCategoryDto: CreateCategoryDto,
+    @Body() createCategoryDto: CategoryDto,
     @GetUser() user: User,
   ) {
     this.logger.verbose(
@@ -41,7 +41,7 @@ export class CategoriesController {
   @Put('/:id')
   updateAuthor(
     @Param('id') id: string,
-    @Body() editCategory: CreateCategoryDto,
+    @Body() editCategory: CategoryDto,
     @GetUser() user: User,
   ) {
     this.logger.verbose(

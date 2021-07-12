@@ -27,7 +27,7 @@ export class BooksRepository extends Repository<Book> {
     } = createBookDto;
     const book = await this.create({
       title,
-      publish_year,
+      publishYear: publish_year,
       price,
       description,
       cover,
@@ -49,32 +49,29 @@ export class BooksRepository extends Repository<Book> {
     }
   }
 
-  async getBooksByName(title: string) {
-    let listBooks = await this.getAllBooks();
-    listBooks = listBooks.filter((s) => s.title.includes(title));
-    return listBooks;
-  }
-
-  async getAllBooks(): Promise<GetBookDto[]> {
+  async getBooks(title?: string): Promise<GetBookDto[]> {
     const listBooks = await this.find({
       relations: ['author', 'category'],
     });
-    const listBooksReturn: GetBookDto[] = listBooks.map((book) => {
+    let listBooksReturn: GetBookDto[] = listBooks.map((book) => {
       return {
         id: book.id,
         title: book.title,
-        publish_year: book.publish_year,
+        publish_year: book.publishYear,
         cover: book.cover,
         author_name: book.author.name,
         category_name: book.category.name,
       };
     });
+    if (title)
+      listBooksReturn = listBooksReturn.filter((s) => s.title.includes(title));
     console.log(listBooksReturn);
+
     return listBooksReturn;
   }
   async getBooksByFilter(getBooksFilterDto: GetBookFilterDto) {
     const { author, category } = getBooksFilterDto;
-    let listBooks = await this.getAllBooks();
+    let listBooks = await this.getBooks();
     if (author)
       listBooks = listBooks.filter((s) => s.author_name.includes(author));
     if (category)

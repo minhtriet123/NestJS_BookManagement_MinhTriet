@@ -14,9 +14,6 @@ export class BooksService {
     private booksRepository: BooksRepository,
   ) {}
 
-  async getBooksByName(title: string) {
-    return this.booksRepository.getBooksByName(title);
-  }
   async createBook(createBookDto: CreateBookDto): Promise<Book> {
     return this.booksRepository.createBook(createBookDto);
   }
@@ -24,13 +21,13 @@ export class BooksService {
   async getBooksByFilter(booksFilterDto: GetBookFilterDto) {
     return this.booksRepository.getBooksByFilter(booksFilterDto);
   }
-  async getAllBooks(): Promise<GetBookDto[]> {
-    return this.booksRepository.getAllBooks();
+  async getAllBooks(title: string): Promise<GetBookDto[]> {
+    return this.booksRepository.getBooks(title);
   }
   async getBookById(id: string) {
     const found = await this.booksRepository.findOne({ where: { id } });
     if (!found) {
-      throw new NotFoundException(`No Book with ID: ${id} is not found`);
+      throw new NotFoundException(`No Book with ID: ${id} is found`);
     }
     return found;
   }
@@ -38,7 +35,7 @@ export class BooksService {
   async deleteBook(id: string) {
     const result = await this.booksRepository.delete({ id });
     if (result.affected === 0)
-      throw new NotFoundException(`No book with ID ${id} is not found`);
+      throw new NotFoundException(`No book with ID ${id} is found`);
     return result;
   }
 

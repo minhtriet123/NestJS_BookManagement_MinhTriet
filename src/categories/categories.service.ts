@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoriesRepository } from './categories.repository';
-import { CreateCategoryDto } from './dto/create-category.dto';
+import { CategoryDto } from './dto/category.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -9,22 +9,20 @@ export class CategoriesService {
     @InjectRepository(CategoriesRepository)
     private categoryRepository: CategoriesRepository,
   ) {}
-  async createCategory(
-    createCategoryDto: CreateCategoryDto,
-  ): Promise<CreateCategoryDto> {
+  async createCategory(createCategoryDto: CategoryDto): Promise<CategoryDto> {
     return this.categoryRepository.createCategory(createCategoryDto);
   }
   async deleteCategory(id: string) {
-    const result = await this.categoryRepository.delete({ id });
-    if (result.affected === 0)
-      throw new NotFoundException(`No category with ID ${id} is not found`);
-    return result;
+    const result = await this.categoryRepository.findOne({ id });
+    if (!result)
+      throw new NotFoundException(`No category with ID ${id} is found`);
+    return await this.categoryRepository.delete({ id });
   }
-  async updateCategory(id: string, editcategory: CreateCategoryDto) {
-    const { name } = editcategory;
+  async updateCategory(id: string, editcategory: CategoryDto) {
     const category = await this.categoryRepository.findOne({ id });
-    category.name = name;
-    await this.categoryRepository.save(category);
-    return category;
+    if (!category) {
+      throw new NotFoundException(`No category with ID ${id} is found`);
+    }
+    return await this.categoryRepository.save({ ...category, ...editcategory });
   }
 }

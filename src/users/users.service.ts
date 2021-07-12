@@ -5,7 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { loggerApp } from 'src/logger.enum/logger.enum';
 import { AccessTokenDto } from './dto/accessToken.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { GetProfile } from './dto/get-profile.dto';
+import { GetProfileDto } from './dto/get-profile.dto';
 import { UserCredentialDto } from './dto/user-credential.dto';
 import { JwtPayload } from './jwt-payload.interface';
 import { LoginStatus } from './loginStatus.enum';
@@ -40,7 +40,7 @@ export class UsersService {
       throw new UnauthorizedException(LoginStatus.FAIL_LOGIN);
     }
   }
-  async getProfile(user: User): Promise<GetProfile> {
+  async getProfile(user: User): Promise<GetProfileDto> {
     return this.userRepositry.getProfile(user);
   }
 }

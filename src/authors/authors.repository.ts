@@ -1,22 +1,23 @@
-import { InternalServerErrorException } from '@nestjs/common';
+import { InternalServerErrorException, Logger } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { Author } from './author.entity';
-import { CreateAuthorDto } from './dto/create-author.dto';
+import { AuthorDto } from './dto/author.dto';
 
 @EntityRepository(Author)
 export class AuthorsRepository extends Repository<Author> {
-  async createAuthor(
-    createAuthorDto: CreateAuthorDto,
-  ): Promise<CreateAuthorDto> {
+  private logger = new Logger();
+  async createAuthor(createAuthorDto: AuthorDto): Promise<AuthorDto> {
     const { name } = createAuthorDto;
     const category = await this.create({
       name,
     });
     try {
-      await this.save(category);
+      return await this.save(category);
     } catch (error) {
-      throw new InternalServerErrorException();
+      this.logger.error(
+        `Fail to create author.Error message: ${error.message}`,
+      );
+      throw new InternalServerErrorException(`Error: Fail to create author`);
     }
-    return category;
   }
 }
