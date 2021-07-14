@@ -17,7 +17,7 @@ import { GetBookFilterDto } from './dto/get-book-filter.dto';
 import { GetBookDto } from './dto/get-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 
-@Controller('book-management/books')
+@Controller('api/books')
 @UseGuards(AuthGuard('jwt'))
 export class BooksController {
   constructor(private booksService: BooksService) {}

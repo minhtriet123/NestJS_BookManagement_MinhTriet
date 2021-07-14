@@ -11,13 +11,13 @@ export class CreateBookDto {
 
   @IsString()
   @IsNotEmpty()
-  author_id: string;
+  authorId: string;
 
   @IsString()
-  category_id: string;
+  categoryId: string;
 
   @IsNumberString()
-  publish_year: string;
+  publishYear: string;
 
   @IsNotEmpty()
   price: number;

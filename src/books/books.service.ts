@@ -24,8 +24,10 @@ export class BooksService {
   async getAllBooks(title: string): Promise<GetBookDto[]> {
     return this.booksRepository.getBooks(title);
   }
-  async getBookById(id: string) {
-    const found = await this.booksRepository.findOne({ where: { id } });
+  async getBookById(id: string): Promise<Book> {
+    const found = await this.booksRepository.findOne({
+      where: { id, is_deleted: false },
+    });
     if (!found) {
       throw new NotFoundException(`No Book with ID: ${id} is found`);
     }
@@ -33,22 +35,23 @@ export class BooksService {
   }
 
   async deleteBook(id: string) {
-    const result = await this.booksRepository.delete({ id });
-    if (result.affected === 0)
-      throw new NotFoundException(`No book with ID ${id} is found`);
-    return result;
+    const found = await this.booksRepository.findOne({
+      where: { id, is_deleted: false },
+    });
+    if (!found) {
+      throw new NotFoundException(`No Book with ID: ${id} is found`);
+    }
+    found.is_deleted = true;
+    return this.booksRepository.save(found);
   }
 
   async updateBook(id: string, updateBookDto: UpdateBookDto): Promise<Book> {
-    const { title, author_id, category_id, price, description } = updateBookDto;
-    const book = await this.getBookById(id);
-    if (title) book.title = title;
-    if (author_id) book.author.id = author_id;
-    if (category_id) book.category.id = category_id;
-    if (price) book.price = price;
-    if (description) book.description = description;
-    book.updatedAt = new Date();
-    await this.booksRepository.save(book);
-    return book;
+    const book = await this.booksRepository.findOne({
+      where: { id, is_deleted: false },
+    });
+    if (!book) {
+      throw new NotFoundException(`No Book with ID: ${id} is found`);
+    }
+    return await this.booksRepository.save({ ...book, ...updateBookDto });
   }
 }

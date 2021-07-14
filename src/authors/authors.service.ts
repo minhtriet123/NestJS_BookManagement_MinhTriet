@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Author } from './author.entity';
 import { AuthorsRepository } from './authors.repository';
 import { AuthorDto } from './dto/author.dto';
 
@@ -12,13 +13,18 @@ export class AuthorsService {
   async createAuthor(createAuthorDto: AuthorDto): Promise<AuthorDto> {
     return this.authorRepository.createAuthor(createAuthorDto);
   }
-  async deleteAuthor(id: string) {
-    const author = await this.authorRepository.findOne({ id });
+  async deleteAuthor(id: string): Promise<Author> {
+    const author = await this.authorRepository.findOne({
+      where: { id, is_deleted: false },
+    });
     if (!author) throw new NotFoundException(`No author id ${id} was found`);
-    return this.authorRepository.delete({ id });
+    author.is_deleted = true;
+    return this.authorRepository.save(author);
   }
   async updateAuthor(id: string, editAuthor: AuthorDto) {
-    const author = await this.authorRepository.findOne({ id });
+    const author = await this.authorRepository.findOne({
+      where: { id, is_deleted: false },
+    });
     if (!author) throw new NotFoundException(`No author was found`);
     return await this.authorRepository.save({ ...author, ...editAuthor });
   }

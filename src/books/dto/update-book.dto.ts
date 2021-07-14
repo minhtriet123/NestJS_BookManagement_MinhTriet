@@ -7,11 +7,11 @@ export class UpdateBookDto {
 
   @IsString()
   @IsOptional()
-  author_id?: string;
+  authorId?: string;
 
   @IsString()
   @IsOptional()
-  category_id?: string;
+  categoryId?: string;
 
   @IsString()
   @IsOptional()

@@ -11,7 +11,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthorsService } from './authors.service';
 import { AuthorDto } from './dto/author.dto';
 
-@Controller('book-management/authors')
+@Controller('api/authors')
 @UseGuards(AuthGuard('jwt'))
 export class AuthorsController {
   constructor(private authorsService: AuthorsService) {}

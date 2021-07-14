@@ -13,13 +13,18 @@ export class CategoriesService {
     return this.categoryRepository.createCategory(createCategoryDto);
   }
   async deleteCategory(id: string) {
-    const result = await this.categoryRepository.findOne({ id });
+    const result = await this.categoryRepository.findOne({
+      where: { id, is_deleted: false },
+    });
     if (!result)
       throw new NotFoundException(`No category with ID ${id} is found`);
-    return await this.categoryRepository.delete({ id });
+    result.is_deleted = true;
+    return await this.categoryRepository.save(result);
   }
   async updateCategory(id: string, editcategory: CategoryDto) {
-    const category = await this.categoryRepository.findOne({ id });
+    const category = await this.categoryRepository.findOne({
+      where: { id, is_deleted: false },
+    });
     if (!category) {
       throw new NotFoundException(`No category with ID ${id} is found`);
     }

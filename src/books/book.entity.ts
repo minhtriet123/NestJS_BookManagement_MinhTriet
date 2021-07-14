@@ -7,6 +7,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -32,7 +33,7 @@ export class Book {
   category: Category;
 
   @Column()
-  publishYear: string;
+  publish_year: string;
 
   @Column()
   price: number;
@@ -43,9 +44,12 @@ export class Book {
   @Column({ default: '' })
   cover: string;
 
-  @CreateDateColumn({ default: () => 'CURRENT_TIMESTAMP', type: 'timestamp' })
-  createdAt: Date;
+  @CreateDateColumn()
+  created_at: Date;
 
-  @CreateDateColumn({ default: () => 'CURRENT_TIMESTAMP', type: 'timestamp' })
-  updatedAt: Date;
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @Column({ default: false })
+  is_deleted: boolean;
 }

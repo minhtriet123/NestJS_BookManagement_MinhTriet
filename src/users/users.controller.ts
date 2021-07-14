@@ -9,7 +9,7 @@ import { GetUser } from './get-user.decorator';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 
-@Controller('book-management/users')
+@Controller('api/users')
 export class UsersController {
   private logger = new Logger('UsersController');
   constructor(private userService: UsersService) {}
@@ -26,7 +26,7 @@ export class UsersController {
   ): Promise<AccessTokenDto> {
     return this.userService.signIn(usercredentialDto);
   }
-  @Get()
+  @Get('/profile')
   @UseGuards(AuthGuard('jwt'))
   getProfile(@GetUser() user: User): Promise<GetProfileDto> {
     console.log(user);

@@ -14,12 +14,12 @@ import { Logger } from '@nestjs/common';
 import { GetUser } from 'src/users/get-user.decorator';
 import { User } from 'src/users/user.entity';
 
-@Controller('book-management/categories')
+@Controller('api/categories')
 @UseGuards(AuthGuard('jwt'))
 export class CategoriesController {
   private logger = new Logger('CategoriesController');
   constructor(private categoriesService: CategoriesService) {}
-  @Post('/create-category')
+  @Post()
   createCategory(
     @Body() createCategoryDto: CategoryDto,
     @GetUser() user: User,

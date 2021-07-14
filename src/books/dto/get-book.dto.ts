@@ -3,11 +3,11 @@ export class GetBookDto {
 
   title: string;
 
-  publish_year: string;
+  publishYear: string;
 
   cover: string;
 
-  author_name: string;
+  authorName: string;
 
-  category_name: string;
+  categoryName: string;
 }

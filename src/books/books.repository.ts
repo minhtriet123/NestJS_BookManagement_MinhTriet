@@ -17,27 +17,21 @@ export class BooksRepository extends Repository<Book> {
   async createBook(createBookDto: CreateBookDto): Promise<Book> {
     const {
       title,
-      author_id,
-      category_id,
-      publish_year,
+      authorId,
+      categoryId,
+      publishYear,
       price,
       description,
       cover,
-      updatedAt,
     } = createBookDto;
-    const book = await this.create({
+    const book = this.create({
       title,
-      publishYear: publish_year,
-      price,
-      description,
-      cover,
-      updatedAt,
-      author: {
-        id: author_id,
-      },
-      category: {
-        id: category_id,
-      },
+      publish_year: publishYear,
+      price: price,
+      description: description,
+      cover: cover,
+      author: { id: authorId },
+      category: { id: categoryId },
     });
     try {
       await this.save(book);
@@ -53,29 +47,31 @@ export class BooksRepository extends Repository<Book> {
     const listBooks = await this.find({
       relations: ['author', 'category'],
     });
-    let listBooksReturn: GetBookDto[] = listBooks.map((book) => {
-      return {
-        id: book.id,
-        title: book.title,
-        publish_year: book.publishYear,
-        cover: book.cover,
-        author_name: book.author.name,
-        category_name: book.category.name,
-      };
-    });
+    let listBooksReturn = this.mappingBooks(listBooks);
     if (title)
       listBooksReturn = listBooksReturn.filter((s) => s.title.includes(title));
-    console.log(listBooksReturn);
-
     return listBooksReturn;
   }
-  async getBooksByFilter(getBooksFilterDto: GetBookFilterDto) {
+  async getBooksByFilter(
+    getBooksFilterDto: GetBookFilterDto,
+  ): Promise<GetBookDto[]> {
     const { author, category } = getBooksFilterDto;
     let listBooks = await this.getBooks();
     if (author)
-      listBooks = listBooks.filter((s) => s.author_name.includes(author));
+      listBooks = listBooks.filter((s) => s.authorName.includes(author));
     if (category)
-      listBooks = listBooks.filter((s) => s.category_name.includes(category));
+      listBooks = listBooks.filter((s) => s.categoryName.includes(category));
     return listBooks;
+  }
+
+  mappingBooks(listBooks: Book[]): GetBookDto[] {
+    return listBooks.map((book) => ({
+      id: book.id,
+      title: book.title,
+      publishYear: book.publish_year,
+      cover: book.cover,
+      authorName: book.author.name,
+      categoryName: book.category.name,
+    }));
   }
 }
