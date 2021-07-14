@@ -17,7 +17,7 @@ export class BooksService {
     return this.booksRepository.createBook(createBookDto);
   }
 
-  async getBooksByFilter(booksFilterDto: GetBookFilterDto) {
+  async getBooksByFilter(booksFilterDto: GetBookFilterDto): Promise<Book[]> {
     return this.booksRepository.getBooksByFilter(booksFilterDto);
   }
   async getAllBooks(title: string): Promise<Book[]> {
@@ -34,7 +34,7 @@ export class BooksService {
     return found;
   }
 
-  async deleteBook(id: string) {
+  async deleteBook(id: string): Promise<Book> {
     const found = await this.booksRepository.findOne({
       where: { id, is_deleted: false },
     });
@@ -57,7 +57,6 @@ export class BooksService {
     if (categoryId) book.category.id = categoryId;
     if (price) book.price = price;
     if (description) book.description = description;
-    await this.booksRepository.save(book);
-    return book;
+    return await this.booksRepository.save(book);
   }
 }

@@ -26,12 +26,14 @@ export class BooksController {
   }
 
   @Get('/filter')
-  getBooksByFilter(@Query() getBookFilterDto: GetBookFilterDto) {
+  getBooksByFilter(
+    @Query() getBookFilterDto: GetBookFilterDto,
+  ): Promise<Book[]> {
     return this.booksService.getBooksByFilter(getBookFilterDto);
   }
 
   @Get('/:id')
-  getBookById(@Param('id') id: string) {
+  getBookById(@Param('id') id: string): Promise<Book> {
     return this.booksService.getBookById(id);
   }
 
@@ -41,12 +43,15 @@ export class BooksController {
   }
 
   @Delete('/:id')
-  deteleBook(@Param('id') id: string) {
+  deteleBook(@Param('id') id: string): Promise<Book> {
     return this.booksService.deleteBook(id);
   }
 
   @Patch('/:id/edit')
-  updateBook(@Param('id') id: string, @Body() updateBook: UpdateBookDto) {
+  updateBook(
+    @Param('id') id: string,
+    @Body() updateBook: UpdateBookDto,
+  ): Promise<Book> {
     return this.booksService.updateBook(id, updateBook);
   }
 }

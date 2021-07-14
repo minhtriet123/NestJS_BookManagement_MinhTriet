@@ -3,15 +3,12 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
+import { loggerApp } from 'src/logger.enum/logger.enum';
 import { EntityRepository, Repository } from 'typeorm';
 import { Book } from './book.entity';
 import { CreateBookDto } from './dto/create-book.dto';
 import { GetBookFilterDto } from './dto/get-book-filter.dto';
-enum status {
-  NO_PRESENT_CODE = '23503',
-  NO_PRESENT = 'Error: no present record in parent table',
-  FAIL_GET_BOOK = 'Fail to get books by filter',
-}
+
 @EntityRepository(Book)
 export class BooksRepository extends Repository<Book> {
   private logger = new Logger('BooksRepository', true);
@@ -38,8 +35,8 @@ export class BooksRepository extends Repository<Book> {
       await this.save(book);
       return book;
     } catch (error) {
-      if (error.code === status.NO_PRESENT_CODE)
-        throw new ConflictException(status.NO_PRESENT);
+      if (error.code === loggerApp.NO_PRESENT_CODE)
+        throw new ConflictException(loggerApp.NO_PRESENT);
       else throw new InternalServerErrorException();
     }
   }
@@ -58,7 +55,7 @@ export class BooksRepository extends Repository<Book> {
       const books = await query.getMany();
       return books;
     } catch (e) {
-      this.logger.error(status.NO_PRESENT, e.stack);
+      this.logger.error(loggerApp.NO_PRESENT, e.stack);
       throw new InternalServerErrorException();
     }
   }
@@ -82,7 +79,7 @@ export class BooksRepository extends Repository<Book> {
       const books = await query.getMany();
       return books;
     } catch (e) {
-      this.logger.error(status.NO_PRESENT, e.stack);
+      this.logger.error(loggerApp.NO_PRESENT, e.stack);
       throw new InternalServerErrorException();
     }
   }

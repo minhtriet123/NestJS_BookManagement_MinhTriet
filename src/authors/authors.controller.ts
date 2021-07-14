@@ -8,6 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Author } from './author.entity';
 import { AuthorsService } from './authors.service';
 import { AuthorDto } from './dto/author.dto';
 
@@ -16,17 +17,20 @@ import { AuthorDto } from './dto/author.dto';
 export class AuthorsController {
   constructor(private authorsService: AuthorsService) {}
   @Post('/create-author')
-  createCategory(@Body() createAuthorDto: AuthorDto) {
+  createCategory(@Body() createAuthorDto: AuthorDto): Promise<AuthorDto> {
     return this.authorsService.createAuthor(createAuthorDto);
   }
 
   @Delete('/:id')
-  deteleBook(@Param('id') id: string) {
+  deteleBook(@Param('id') id: string): Promise<Author> {
     return this.authorsService.deleteAuthor(id);
   }
 
   @Put('/:id')
-  updateAuthor(@Param('id') id: string, @Body() AuthorDto: AuthorDto) {
+  updateAuthor(
+    @Param('id') id: string,
+    @Body() AuthorDto: AuthorDto,
+  ): Promise<Author> {
     return this.authorsService.updateAuthor(id, AuthorDto);
   }
 }
