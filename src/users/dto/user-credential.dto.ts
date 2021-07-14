@@ -6,7 +6,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { LoginStatus } from '../loginStatus.model';
+import { LoginStatus } from '../loginStatus.enum';
 
 export class UserCredentialDto {
   @IsEmail()
