@@ -1,19 +1,20 @@
 import {
   ConflictException,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { Book } from './book.entity';
 import { CreateBookDto } from './dto/create-book.dto';
 import { GetBookFilterDto } from './dto/get-book-filter.dto';
-import { GetBookDto } from './dto/get-book.dto';
-import { UpdateBookDto } from './dto/update-book.dto';
 enum status {
   NO_PRESENT_CODE = '23503',
   NO_PRESENT = 'Error: no present record in parent table',
+  FAIL_GET_BOOK = 'Fail to get books by filter',
 }
 @EntityRepository(Book)
 export class BooksRepository extends Repository<Book> {
+  private logger = new Logger('BooksRepository', true);
   async createBook(createBookDto: CreateBookDto): Promise<Book> {
     const {
       title,
@@ -43,35 +44,46 @@ export class BooksRepository extends Repository<Book> {
     }
   }
 
-  async getBooks(title?: string): Promise<GetBookDto[]> {
-    const listBooks = await this.find({
-      relations: ['author', 'category'],
-    });
-    let listBooksReturn = this.mappingBooks(listBooks);
-    if (title)
-      listBooksReturn = listBooksReturn.filter((s) => s.title.includes(title));
-    return listBooksReturn;
+  async getBooks(title?: string): Promise<Book[]> {
+    const query = this.createQueryBuilder('book')
+      .leftJoinAndSelect('book.author', 'author')
+      .leftJoinAndSelect('book.category', 'category')
+      .where('book.is_deleted = :isDeleted', { isDeleted: false });
+    if (title) {
+      query.andWhere('(LOWER(book.title) LIKE LOWER(:title))', {
+        title: `%${title}%`,
+      });
+    }
+    try {
+      const books = await query.getMany();
+      return books;
+    } catch (e) {
+      this.logger.error(status.NO_PRESENT, e.stack);
+      throw new InternalServerErrorException();
+    }
   }
-  async getBooksByFilter(
-    getBooksFilterDto: GetBookFilterDto,
-  ): Promise<GetBookDto[]> {
+  async getBooksByFilter(getBooksFilterDto: GetBookFilterDto): Promise<Book[]> {
     const { author, category } = getBooksFilterDto;
-    let listBooks = await this.getBooks();
-    if (author)
-      listBooks = listBooks.filter((s) => s.authorName.includes(author));
-    if (category)
-      listBooks = listBooks.filter((s) => s.categoryName.includes(category));
-    return listBooks;
-  }
-
-  mappingBooks(listBooks: Book[]): GetBookDto[] {
-    return listBooks.map((book) => ({
-      id: book.id,
-      title: book.title,
-      publishYear: book.publish_year,
-      cover: book.cover,
-      authorName: book.author.name,
-      categoryName: book.category.name,
-    }));
+    const query = this.createQueryBuilder('book')
+      .leftJoinAndSelect('book.author', 'author')
+      .leftJoinAndSelect('book.category', 'category');
+    query.where('book.is_deleted = :isDeleted', { isDeleted: false });
+    if (author) {
+      query.andWhere('(LOWER(author.name) LIKE LOWER(:authorName))', {
+        authorName: `%${author}%`,
+      });
+    }
+    if (category) {
+      query.andWhere('(LOWER(category.name) LIKE LOWER(:categoryName))', {
+        categoryName: `%${category}%`,
+      });
+    }
+    try {
+      const books = await query.getMany();
+      return books;
+    } catch (e) {
+      this.logger.error(status.NO_PRESENT, e.stack);
+      throw new InternalServerErrorException();
+    }
   }
 }

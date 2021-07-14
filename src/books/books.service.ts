@@ -4,7 +4,6 @@ import { Book } from './book.entity';
 import { BooksRepository } from './books.repository';
 import { CreateBookDto } from './dto/create-book.dto';
 import { GetBookFilterDto } from './dto/get-book-filter.dto';
-import { GetBookDto } from './dto/get-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 
 @Injectable()
@@ -21,12 +20,13 @@ export class BooksService {
   async getBooksByFilter(booksFilterDto: GetBookFilterDto) {
     return this.booksRepository.getBooksByFilter(booksFilterDto);
   }
-  async getAllBooks(title: string): Promise<GetBookDto[]> {
+  async getAllBooks(title: string): Promise<Book[]> {
     return this.booksRepository.getBooks(title);
   }
   async getBookById(id: string): Promise<Book> {
     const found = await this.booksRepository.findOne({
       where: { id, is_deleted: false },
+      relations: ['author', 'category'],
     });
     if (!found) {
       throw new NotFoundException(`No Book with ID: ${id} is found`);
@@ -46,12 +46,18 @@ export class BooksService {
   }
 
   async updateBook(id: string, updateBookDto: UpdateBookDto): Promise<Book> {
+    const { title, authorId, categoryId, price, description } = updateBookDto;
     const book = await this.booksRepository.findOne({
       where: { id, is_deleted: false },
+      relations: ['author', 'category'],
     });
-    if (!book) {
-      throw new NotFoundException(`No Book with ID: ${id} is found`);
-    }
-    return await this.booksRepository.save({ ...book, ...updateBookDto });
+    if (!book) throw new NotFoundException(`No Book with ID: ${id} is found`);
+    if (title) book.title = title;
+    if (authorId) book.author.id = authorId;
+    if (categoryId) book.category.id = categoryId;
+    if (price) book.price = price;
+    if (description) book.description = description;
+    await this.booksRepository.save(book);
+    return book;
   }
 }

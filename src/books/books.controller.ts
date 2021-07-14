@@ -14,7 +14,6 @@ import { Book } from './book.entity';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { GetBookFilterDto } from './dto/get-book-filter.dto';
-import { GetBookDto } from './dto/get-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 
 @Controller('api/books')
@@ -22,7 +21,7 @@ import { UpdateBookDto } from './dto/update-book.dto';
 export class BooksController {
   constructor(private booksService: BooksService) {}
   @Get()
-  getAllBooks(@Query('search') title: string): Promise<GetBookDto[]> {
+  getAllBooks(@Query('search') title: string): Promise<Book[]> {
     return this.booksService.getAllBooks(title);
   }
 
