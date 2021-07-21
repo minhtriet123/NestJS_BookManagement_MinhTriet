@@ -10,7 +10,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env.stage.dev'],
-      isGlobal: true,
     }),
     UsersModule,
     TypeOrmModule.forRootAsync({
