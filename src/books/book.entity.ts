@@ -15,7 +15,7 @@ export class Book {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column()
   title: string;
 
   @ManyToOne(() => Author, (author) => author.id, {

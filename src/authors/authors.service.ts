@@ -21,7 +21,7 @@ export class AuthorsService {
     author.is_deleted = true;
     return this.authorRepository.save(author);
   }
-  async updateAuthor(id: string, editAuthor: AuthorDto) {
+  async updateAuthor(id: string, editAuthor: AuthorDto): Promise<Author> {
     const author = await this.authorRepository.findOne({
       where: { id, is_deleted: false },
     });

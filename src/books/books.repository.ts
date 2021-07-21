@@ -32,12 +32,11 @@ export class BooksRepository extends Repository<Book> {
       category: { id: categoryId },
     });
     try {
-      await this.save(book);
-      return book;
+      return await this.save(book);
     } catch (error) {
       if (error.code === loggerApp.NO_PRESENT_CODE)
         throw new ConflictException(loggerApp.NO_PRESENT);
-      else throw new InternalServerErrorException();
+      throw new InternalServerErrorException();
     }
   }
 

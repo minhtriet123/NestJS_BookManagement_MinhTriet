@@ -9,17 +9,19 @@ export class CreateBookDto {
   @IsString()
   title: string;
 
-  @IsString()
+  @IsNumberString()
   @IsNotEmpty()
   authorId: string;
 
-  @IsString()
+  @IsNumberString()
+  @IsNotEmpty()
   categoryId: string;
 
   @IsNumberString()
   publishYear: string;
 
   @IsNotEmpty()
+  @IsNumberString()
   price: number;
 
   @IsString()
@@ -29,8 +31,4 @@ export class CreateBookDto {
   @IsString()
   @IsOptional()
   cover?: string;
-
-  @IsString()
-  @IsOptional()
-  updatedAt?: string;
 }

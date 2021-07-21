@@ -1,19 +1,19 @@
-import { IsNumberString, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateBookDto {
   @IsString()
   @IsOptional()
   title?: string;
 
-  @IsString()
+  @IsNumber()
   @IsOptional()
   authorId?: string;
 
-  @IsString()
+  @IsNumber()
   @IsOptional()
   categoryId?: string;
 
-  @IsNumberString()
+  @IsNumber()
   @IsOptional()
   price?: number;
 
