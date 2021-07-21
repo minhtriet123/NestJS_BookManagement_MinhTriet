@@ -51,13 +51,12 @@ export class BooksService {
       where: { id, is_deleted: false },
       relations: ['author', 'category'],
     });
-    // if (!book) throw new NotFoundException(`No Book with ID: ${id} is found`);
-    // if (title) book.title = title;
-    // if (authorId) book.author.id = authorId;
-    // if (categoryId) book.category.id = categoryId;
-    // if (price) book.price = price;
-    // if (description) book.description = description;
-    const updatedBook = { ...book, ...updateBookDto };
-    return await this.booksRepository.save(updatedBook);
+    if (!book) throw new NotFoundException(`No Book with ID: ${id} is found`);
+    if (title) book.title = title;
+    if (authorId) book.author.id = authorId;
+    if (categoryId) book.category.id = categoryId;
+    if (price) book.price = price;
+    if (description) book.description = description;
+    return await this.booksRepository.save(book);
   }
 }
