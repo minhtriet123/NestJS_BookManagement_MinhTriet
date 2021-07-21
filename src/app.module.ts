@@ -8,13 +8,21 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: ['.env.stage.dev'],
+      isGlobal: true,
+    }),
     UsersModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
+        const isProduction = configService.get('STAGE') === 'prod';
         return {
-          ssl: true,
+          ssl: isProduction,
+          extra: {
+            ssl: isProduction ? { rejectUnauthorized: false } : null,
+          },
           type: 'postgres',
           host: configService.get('HOST_DB'),
           port: configService.get('PORT_DB'),
@@ -29,12 +37,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     BooksModule,
     AuthorsModule,
     CategoriesModule,
-    ConfigModule.forRoot({
-      envFilePath: '.development.env',
-      isGlobal: true,
-    }),
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}
