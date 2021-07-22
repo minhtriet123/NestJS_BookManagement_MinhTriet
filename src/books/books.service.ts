@@ -1,5 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { Book } from './book.entity';
 import { BooksRepository } from './books.repository';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -16,13 +21,28 @@ export class BooksService {
   async createBook(createBookDto: CreateBookDto): Promise<Book> {
     return this.booksRepository.createBook(createBookDto);
   }
-
+  async paginate(
+    options: IPaginationOptions,
+    title: string,
+  ): Promise<Pagination<Book>> {
+    const queryBuilder = this.booksRepository
+      .createQueryBuilder('book')
+      .leftJoinAndSelect('book.author', 'author')
+      .leftJoinAndSelect('book.category', 'category')
+      .where('book.is_deleted = :isDeleted', { isDeleted: false });
+    if (title) {
+      queryBuilder.andWhere('(LOWER(book.title) LIKE LOWER(:title))', {
+        title: `%${title}%`,
+      });
+    }
+    return paginate<Book>(queryBuilder, options);
+  }
   async getBooksByFilter(booksFilterDto: GetBookFilterDto): Promise<Book[]> {
     return this.booksRepository.getBooksByFilter(booksFilterDto);
   }
-  async getAllBooks(title: string): Promise<Book[]> {
-    return this.booksRepository.getBooks(title);
-  }
+  // async getAllBooks(title: string): Promise<Book[]> {
+  //   return this.booksRepository.getBooks(title);
+  // }
   async getBookById(id: string): Promise<Book> {
     const found = await this.booksRepository.findOne({
       where: { id, is_deleted: false },

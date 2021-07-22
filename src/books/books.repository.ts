@@ -40,24 +40,24 @@ export class BooksRepository extends Repository<Book> {
     }
   }
 
-  async getBooks(title?: string): Promise<Book[]> {
-    const query = this.createQueryBuilder('book')
-      .leftJoinAndSelect('book.author', 'author')
-      .leftJoinAndSelect('book.category', 'category')
-      .where('book.is_deleted = :isDeleted', { isDeleted: false });
-    if (title) {
-      query.andWhere('(LOWER(book.title) LIKE LOWER(:title))', {
-        title: `%${title}%`,
-      });
-    }
-    try {
-      const books = await query.getMany();
-      return books;
-    } catch (e) {
-      this.logger.error(loggerApp.NO_PRESENT, e.stack);
-      throw new InternalServerErrorException();
-    }
-  }
+  // async getBooks(title?: string): Promise<Book[]> {
+  //   const query = this.createQueryBuilder('book')
+  //     .leftJoinAndSelect('book.author', 'author')
+  //     .leftJoinAndSelect('book.category', 'category')
+  //     .where('book.is_deleted = :isDeleted', { isDeleted: false });
+  //   if (title) {
+  //     query.andWhere('(LOWER(book.title) LIKE LOWER(:title))', {
+  //       title: `%${title}%`,
+  //     });
+  //   }
+  //   try {
+  //     const books = await query.getMany();
+  //     return books;
+  //   } catch (e) {
+  //     this.logger.error(loggerApp.NO_PRESENT, e.stack);
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
   async getBooksByFilter(getBooksFilterDto: GetBookFilterDto): Promise<Book[]> {
     const { author, category } = getBooksFilterDto;
     const query = this.createQueryBuilder('book')
