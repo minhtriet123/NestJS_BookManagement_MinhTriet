@@ -1,11 +1,19 @@
-import { Body, Controller, Get, Logger, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Logger,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { loggerApp } from 'src/logger.enum/logger.enum';
 import { AccessTokenDto } from './dto/accessToken.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { GetProfileDto } from './dto/get-profile.dto';
 import { UserCredentialDto } from './dto/user-credential.dto';
-import { GetUser } from './get-user.decorator';
+import { GetUser } from '../auth/get-user.decorator';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 
@@ -31,5 +39,15 @@ export class UsersController {
   getProfile(@GetUser() user: User): Promise<GetProfileDto> {
     console.log(user);
     return this.userService.getProfile(user);
+  }
+
+  @Get('/google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req) {}
+
+  @Get('/google/redirect')
+  @UseGuards(AuthGuard('google'))
+  googleAuthRedirect(@Req() req) {
+    return this.userService.googleLogin(req);
   }
 }

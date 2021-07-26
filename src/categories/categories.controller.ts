@@ -11,7 +11,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { CategoriesService } from './categories.service';
 import { CategoryDto } from './dto/category.dto';
 import { Logger } from '@nestjs/common';
-import { GetUser } from 'src/users/get-user.decorator';
+import { GetUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/users/user.entity';
 import { Category } from './category.entity';
 

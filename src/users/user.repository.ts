@@ -7,7 +7,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { equals } from 'class-validator';
-import { LoginStatus } from './loginStatus.enum';
+import { LoginStatus } from '../auth/loginStatus.enum';
 import { GetProfileDto } from './dto/get-profile.dto';
 
 @EntityRepository(User)
