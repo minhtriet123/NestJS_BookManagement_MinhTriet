@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { FacebookStrategy } from 'src/auth/facebook.strategy';
 import { GoogleStrategy } from 'src/auth/google.strategy';
 import { JwtStrategy } from '../auth/jwt.strategy';
 import { UserRepository } from './user.repository';
@@ -26,7 +27,7 @@ import { UsersService } from './users.service';
     }),
   ],
   controllers: [UsersController],
-  providers: [UsersService, JwtStrategy, GoogleStrategy],
+  providers: [UsersService, JwtStrategy, GoogleStrategy, FacebookStrategy],
   exports: [JwtStrategy, PassportModule],
 })
 export class UsersModule {}

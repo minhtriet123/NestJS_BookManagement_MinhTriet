@@ -5,10 +5,11 @@ import * as bcrypt from 'bcrypt';
 import {
   ConflictException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { equals } from 'class-validator';
 import { LoginStatus } from '../auth/loginStatus.enum';
-import { GetProfileDto } from './dto/get-profile.dto';
+import { ProfileDto } from './dto/get-profile.dto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -43,11 +44,21 @@ export class UserRepository extends Repository<User> {
       throw new ConflictException(LoginStatus.NOT_MATCHED);
     }
   }
-  async getProfile(user: User): Promise<GetProfileDto> {
+  async getProfile(user: User): Promise<ProfileDto> {
     try {
       const get_user = await this.findOne(user);
-      const { email, firstName, lastName, avatar }: GetProfileDto = get_user;
-      return { email, firstName, lastName, avatar };
+      delete get_user.password;
+      return get_user;
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
+  async editProfile(user: User, profileDto: ProfileDto): Promise<ProfileDto> {
+    try {
+      const get_user = await this.findOne(user);
+      delete get_user.password;
+      if (!user) throw new NotFoundException();
+      return await this.save({ ...get_user, ...profileDto });
     } catch (e) {
       throw new InternalServerErrorException();
     }

@@ -11,7 +11,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { loggerApp } from 'src/logger.enum/logger.enum';
 import { AccessTokenDto } from './dto/accessToken.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { GetProfileDto } from './dto/get-profile.dto';
+import { ProfileDto } from './dto/get-profile.dto';
 import { UserCredentialDto } from './dto/user-credential.dto';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from './user.entity';
@@ -36,11 +36,18 @@ export class UsersController {
   }
   @Get('/profile')
   @UseGuards(AuthGuard('jwt'))
-  getProfile(@GetUser() user: User): Promise<GetProfileDto> {
+  getProfile(@GetUser() user: User): Promise<ProfileDto> {
     console.log(user);
     return this.userService.getProfile(user);
   }
-
+  @Post('/edit')
+  @UseGuards(AuthGuard('jwt'))
+  editProfile(
+    @GetUser() user: User,
+    @Body() ProfileDto: ProfileDto,
+  ): Promise<ProfileDto> {
+    return this.userService.editProfile(user, ProfileDto);
+  }
   @Get('/google')
   @UseGuards(AuthGuard('google'))
   async googleAuth(@Req() req) {}
@@ -49,5 +56,15 @@ export class UsersController {
   @UseGuards(AuthGuard('google'))
   googleAuthRedirect(@Req() req) {
     return this.userService.googleLogin(req);
+  }
+
+  @Get('/facebook')
+  @UseGuards(AuthGuard('facebook'))
+  async facebookLogin(){}
+
+  @Get('/facebook/redirect')
+  @UseGuards(AuthGuard('facebook'))
+  async facebookLoginRedirect(@Req() req) {
+    return this.userService.facebookLogin(req);
   }
 }

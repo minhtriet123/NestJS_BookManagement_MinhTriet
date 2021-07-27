@@ -2,9 +2,11 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -20,6 +22,12 @@ import { Category } from './category.entity';
 export class CategoriesController {
   private logger = new Logger('CategoriesController');
   constructor(private categoriesService: CategoriesService) {}
+
+  @Get()
+  getCategories(@Query('search') search?: string): Promise<Category[]> {
+    return this.categoriesService.getCategories(search);
+  }
+
   @Post()
   createCategory(
     @Body() createCategoryDto: CategoryDto,

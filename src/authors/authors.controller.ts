@@ -2,9 +2,11 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -16,7 +18,13 @@ import { AuthorDto } from './dto/author.dto';
 @UseGuards(AuthGuard('jwt'))
 export class AuthorsController {
   constructor(private authorsService: AuthorsService) {}
-  @Post('/create-author')
+
+  @Get()
+  getAuthors(@Query('search') search?: string): Promise<Author[]> {
+    return this.authorsService.getAuthors(search);
+  }
+
+  @Post()
   createCategory(@Body() createAuthorDto: AuthorDto): Promise<AuthorDto> {
     return this.authorsService.createAuthor(createAuthorDto);
   }

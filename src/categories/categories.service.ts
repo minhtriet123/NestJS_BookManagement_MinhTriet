@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoriesRepository } from './categories.repository';
 import { Category } from './category.entity';
@@ -10,6 +14,26 @@ export class CategoriesService {
     @InjectRepository(CategoriesRepository)
     private categoryRepository: CategoriesRepository,
   ) {}
+  async getCategories(search?: string): Promise<Category[]> {
+    const query = this.categoryRepository
+      .createQueryBuilder('category')
+      .where('category.is_deleted = :isDeleted', { isDeleted: false });
+    if (search) {
+      if (parseInt(search)) {
+        query.andWhere(`(category.id=:search)`, { search: search });
+      } else {
+        query.andWhere('(LOWER(category.name) LIKE LOWER(:search))', {
+          search: `%${search}%`,
+        });
+      }
+    }
+    try {
+      const categories = await query.getMany();
+      return categories;
+    } catch (e) {
+      throw new InternalServerErrorException('Fail get category');
+    }
+  }
   async createCategory(createCategoryDto: CategoryDto): Promise<CategoryDto> {
     return this.categoryRepository.createCategory(createCategoryDto);
   }

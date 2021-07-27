@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Author } from './author.entity';
 import { AuthorsRepository } from './authors.repository';
@@ -10,6 +14,26 @@ export class AuthorsService {
     @InjectRepository(AuthorsRepository)
     private authorRepository: AuthorsRepository,
   ) {}
+  async getAuthors(search?: string): Promise<Author[]> {
+    const query = this.authorRepository
+      .createQueryBuilder('author')
+      .where('author.is_deleted = :isDeleted', { isDeleted: false });
+    if (search) {
+      if (parseInt(search)) {
+        query.andWhere(`(author.id=:search)`, { search: search });
+      } else {
+        query.andWhere('(LOWER(author.name) LIKE LOWER(:search))', {
+          search: `%${search}%`,
+        });
+      }
+    }
+    try {
+      const authors = await query.getMany();
+      return authors;
+    } catch (e) {
+      throw new InternalServerErrorException('Fail get author');
+    }
+  }
   async createAuthor(createAuthorDto: AuthorDto): Promise<AuthorDto> {
     return this.authorRepository.createAuthor(createAuthorDto);
   }

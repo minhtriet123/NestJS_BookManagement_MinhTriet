@@ -1,15 +1,19 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsOptional, IsString } from 'class-validator';
 
-export class GetProfileDto {
+export class ProfileDto {
   @IsEmail()
-  email: string;
+  @IsOptional()
+  email?: string;
 
   @IsString()
-  firstName: string;
+  @IsOptional()
+  firstName?: string;
 
   @IsString()
-  lastName: string;
+  @IsOptional()
+  lastName?: string;
 
   @IsString()
-  avatar: string;
+  @IsOptional()
+  avatar?: string;
 }
