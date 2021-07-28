@@ -18,7 +18,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
         return {
-          ssl: { rejectUnauthorized: false },
+          // ssl: { rejectUnauthorized: false },
           type: 'postgres',
           host: configService.get('HOST_DB'),
           port: configService.get('PORT_DB'),
