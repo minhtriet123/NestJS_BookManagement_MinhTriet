@@ -17,6 +17,7 @@ import { JwtPayload } from '../auth/jwt-payload.interface';
 import { LoginStatus } from '../auth/loginStatus.enum';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Injectable()
 export class UsersService {
@@ -109,6 +110,23 @@ export class UsersService {
     }
   }
 
+  async updatePassword(
+    updatePasswordDto: UpdatePasswordDto,
+    user: User,
+  ): Promise<{ message: string }> {
+    const { password, newPassword, confirmNewPassword } = updatePasswordDto;
+    const userDB = await this.userRepositry.findOne(user);
+    if (await bcrypt.compare(password, userDB.password)) {
+      if (newPassword === confirmNewPassword) {
+        const salt = await bcrypt.genSalt();
+        const hashPassword = await bcrypt.hash(newPassword, salt);
+        userDB.password = hashPassword;
+        await this.userRepositry.save(userDB);
+        return { message: loggerApp.SUCCESS_CHANGE_PASS };
+      } else return { message: LoginStatus.NOT_MATCHED };
+    } else return { message: loggerApp.FAIL_PASS };
+  }
+
   async facebookLogin(req) {
     if (!req.user) {
       throw new ConflictException('No User Facebook Found');
@@ -159,6 +177,14 @@ export class UsersService {
         throw new InternalServerErrorException(loggerApp.FAIL_LOGIN_GG);
       }
     }
+  }
+
+  async findOneBy(condition) {
+    return await this.userRepositry.findOne(condition);
+  }
+
+  async update(id: string, data): Promise<any> {
+    return await this.userRepositry.update(id, data);
   }
 
   responseHTML = (data) => {

@@ -9,4 +9,6 @@ export enum loggerApp {
   FAIL_LOGIN_GG = 'Fail to Login by Google Account',
   FAIL_CREATE_ACC_BY_FB = 'Fail to create account for Login by Facebook Account',
   FAIL_LOGIN_FB = 'Fail to Login by Facebook Account',
+  SUCCESS_CHANGE_PASS = 'Success!',
+  FAIL_PASS = 'Password incorect',
 }

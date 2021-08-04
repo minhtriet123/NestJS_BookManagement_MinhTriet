@@ -28,6 +28,6 @@ import { UsersService } from './users.service';
   ],
   controllers: [UsersController],
   providers: [UsersService, JwtStrategy, GoogleStrategy, FacebookStrategy],
-  exports: [JwtStrategy, PassportModule],
+  exports: [JwtStrategy, PassportModule, UsersService],
 })
 export class UsersModule {}

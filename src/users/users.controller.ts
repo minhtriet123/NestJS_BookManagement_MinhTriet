@@ -3,12 +3,12 @@ import {
   Controller,
   Get,
   Logger,
+  Patch,
   Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { loggerApp } from 'src/logger.enum/logger.enum';
 import { AccessTokenDto } from './dto/accessToken.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ProfileDto } from './dto/get-profile.dto';
@@ -16,6 +16,7 @@ import { UserCredentialDto } from './dto/user-credential.dto';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Controller('api/users')
 export class UsersController {
@@ -23,23 +24,23 @@ export class UsersController {
   constructor(private userService: UsersService) {}
   @Post('/signup')
   signUp(@Body() createUserDto: CreateUserDto) {
-    this.logger.verbose(
-      loggerApp.NEW_USER + JSON.stringify(createUserDto.email),
-    );
     return this.userService.signUp(createUserDto);
   }
+
   @Post('/signin')
   signIn(
     @Body() usercredentialDto: UserCredentialDto,
   ): Promise<AccessTokenDto> {
     return this.userService.signIn(usercredentialDto);
   }
+
   @Get('/profile')
   @UseGuards(AuthGuard('jwt'))
   getProfile(@GetUser() user: User): Promise<ProfileDto> {
     console.log(user);
     return this.userService.getProfile(user);
   }
+
   @Post('/edit')
   @UseGuards(AuthGuard('jwt'))
   editProfile(
@@ -48,6 +49,15 @@ export class UsersController {
   ): Promise<ProfileDto> {
     return this.userService.editProfile(user, ProfileDto);
   }
+
+  @Patch('/update-password')
+  updatePassword(
+    @Body() updatePasswordDto: UpdatePasswordDto,
+    @GetUser() user: User,
+  ): Promise<{ message: string }> {
+    return this.userService.updatePassword(updatePasswordDto, user);
+  }
+
   @Get('/google')
   @UseGuards(AuthGuard('google'))
   async googleAuth(@Req() req) {}
@@ -60,7 +70,7 @@ export class UsersController {
 
   @Get('/facebook')
   @UseGuards(AuthGuard('facebook'))
-  async facebookLogin(){}
+  async facebookLogin() {}
 
   @Get('/facebook/redirect')
   @UseGuards(AuthGuard('facebook'))

@@ -5,6 +5,7 @@ import { BooksModule } from './books/books.module';
 import { AuthorsModule } from './authors/authors.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ResetModule } from './reset/reset.module';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
         return {
-          ssl: { rejectUnauthorized: false },
+          // ssl: { rejectUnauthorized: false },
           type: 'postgres',
           host: configService.get('HOST_DB'),
           port: configService.get('PORT_DB'),
@@ -33,6 +34,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     BooksModule,
     AuthorsModule,
     CategoriesModule,
+    ResetModule,
   ],
 })
 export class AppModule {}
