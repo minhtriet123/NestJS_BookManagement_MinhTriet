@@ -18,4 +18,10 @@ export class ResetService {
   async findOne(condition): Promise<Reset> {
     return await this.resetRepository.findOne(condition);
   }
+
+  async setUnavailableToken(condition): Promise<Reset> {
+    const rs = await this.findOne(condition);
+    rs.isAvailable = false;
+    return await this.resetRepository.save(rs);
+  }
 }

@@ -1,5 +1,6 @@
 import {
   IsNotEmpty,
+  IsNumber,
   IsNumberString,
   IsOptional,
   IsString,
@@ -9,11 +10,11 @@ export class CreateBookDto {
   @IsString()
   title: string;
 
-  @IsNumberString()
+  @IsNumber()
   @IsNotEmpty()
   authorId: string;
 
-  @IsNumberString()
+  @IsNumber()
   @IsNotEmpty()
   categoryId: string;
 

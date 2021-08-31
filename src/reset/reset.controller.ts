@@ -5,6 +5,7 @@ import {
   Controller,
   forwardRef,
   Inject,
+  NotAcceptableException,
   NotFoundException,
   Post,
 } from '@nestjs/common';
@@ -28,6 +29,7 @@ export class ResetController {
     await this.resetService.create({
       email,
       token,
+      isAvailable: true,
     });
     const url = `http:/localhost:3000/reset/${token}`;
     await this.mailerService.sendMail({
@@ -48,18 +50,25 @@ export class ResetController {
       throw new BadRequestException(LoginStatus.NOT_MATCHED);
     const reset = await this.resetService.findOne({ token });
 
-    const email = reset.email;
+    const isAvailable = reset.isAvailable;
 
-    const user = await this.usersService.findOneBy({ email });
+    if (isAvailable) {
+      const email = reset.email;
 
-    if (!user) {
-      throw new NotFoundException('User not found!');
+      const user = await this.usersService.findOneBy({ email });
+
+      if (!user) {
+        throw new NotFoundException('User not found!');
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 12);
+
+      await this.usersService.update(user.id, { password: hashedPassword });
+
+      await this.resetService.setUnavailableToken({ token });
+
+      return { message: 'Success!' };
     }
-
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    await this.usersService.update(user.id, { password: hashedPassword });
-
-    return { message: 'Success!' };
+    throw new NotAcceptableException('Token is unavailable!');
   }
 }

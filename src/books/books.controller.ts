@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -64,7 +65,7 @@ export class BooksController {
     return this.booksService.deleteBook(id);
   }
 
-  @Patch('/:id/edit')
+  @Put('/:id/edit')
   updateBook(
     @Param('id') id: string,
     @Body() updateBook: UpdateBookDto,

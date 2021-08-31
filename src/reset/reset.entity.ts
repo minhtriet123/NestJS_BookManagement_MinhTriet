@@ -10,4 +10,7 @@ export class ResetEntity {
 
   @Column()
   token: string;
+
+  @Column({ name: 'is_available', default: true })
+  isAvailable: boolean;
 }
