@@ -6,6 +6,8 @@ import { AuthorsModule } from './authors/authors.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ResetModule } from './reset/reset.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -14,6 +16,11 @@ import { ResetModule } from './reset/reset.module';
       isGlobal: true,
     }),
     UsersModule,
+    MulterModule.registerAsync({
+      useFactory: () => ({
+        dest: './upload',
+      }),
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -35,6 +42,7 @@ import { ResetModule } from './reset/reset.module';
     AuthorsModule,
     CategoriesModule,
     ResetModule,
+    FilesModule,
   ],
 })
 export class AppModule {}

@@ -1,5 +1,9 @@
 import {
   ConflictException,
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -18,6 +22,7 @@ import { LoginStatus } from '../auth/loginStatus.enum';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +30,8 @@ export class UsersService {
   constructor(
     @InjectRepository(UserRepository) private userRepositry: UserRepository,
     private jwtService: JwtService,
+    @Inject(forwardRef(() => FilesService))
+    private filesService: FilesService,
   ) {}
 
   async signUp(createUserDto: CreateUserDto): Promise<UserCredentialDto> {
@@ -198,4 +205,33 @@ export class UsersService {
     );
     return responseHTML;
   };
+
+  // async updateAvatar(user: User, avatar) {
+  //   // save avatar to s3 bucket
+  //   // get avatar link
+  //   // return update to database
+
+  // }
+  async getById(id) {
+    const user = await this.userRepositry.findOne({ id });
+    if (user) {
+      return user;
+    }
+    throw new HttpException(
+      'User with this id does not exist',
+      HttpStatus.NOT_FOUND,
+    );
+  }
+  async addAvatar(userId, imageBuffer: Buffer, filename: string) {
+    const avatar = await this.filesService.uploadPublicFile(
+      imageBuffer,
+      filename,
+    );
+    const user = await this.getById(userId);
+    await this.userRepositry.update(userId, {
+      ...user,
+      avatar: avatar.url,
+    });
+    return avatar;
+  }
 }
