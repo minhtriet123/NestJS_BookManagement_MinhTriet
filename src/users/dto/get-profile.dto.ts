@@ -16,4 +16,8 @@ export class ProfileDto {
   @IsString()
   @IsOptional()
   avatar?: string;
+
+  @IsString()
+  @IsOptional()
+  phoneNumber?: string;
 }

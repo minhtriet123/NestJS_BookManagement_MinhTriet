@@ -21,4 +21,10 @@ export class User {
 
   @Column({ default: '' })
   avatar: string;
+
+  @Column({default: ''})
+  public phoneNumber: string;
+  
+  @Column({ default: false })
+  public isPhoneNumberConfirmed: boolean;
 }

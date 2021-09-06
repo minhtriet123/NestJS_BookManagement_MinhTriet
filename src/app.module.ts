@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ResetModule } from './reset/reset.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { FilesModule } from './files/files.module';
+import { SmsModule } from './sms/sms.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { FilesModule } from './files/files.module';
     CategoriesModule,
     ResetModule,
     FilesModule,
+    SmsModule,
   ],
 })
 export class AppModule {}

@@ -14,8 +14,15 @@ import { ProfileDto } from './dto/get-profile.dto';
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const { email, password, confirmPassword, firstName, lastName, avatar } =
-      createUserDto;
+    const {
+      email,
+      password,
+      confirmPassword,
+      firstName,
+      lastName,
+      avatar,
+      phoneNumber,
+    } = createUserDto;
 
     // Hash Password
     const saltRounds = 10;
@@ -29,6 +36,7 @@ export class UserRepository extends Repository<User> {
         firstName,
         lastName,
         avatar,
+        phoneNumber,
       });
       try {
         await this.save(user);

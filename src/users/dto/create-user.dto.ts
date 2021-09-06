@@ -1,4 +1,4 @@
-import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 import { UserCredentialDto } from './user-credential.dto';
 
 export class CreateUserDto extends UserCredentialDto {
@@ -18,4 +18,9 @@ export class CreateUserDto extends UserCredentialDto {
   @IsString()
   @IsOptional()
   avatar?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^\+[1-9]\d{1,14}$/)
+  phoneNumber: string;
 }

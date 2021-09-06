@@ -234,4 +234,10 @@ export class UsersService {
     });
     return avatar;
   }
+
+  markPhoneNumberAsConfirmed(userId) {
+    return this.userRepositry.update({ id: userId }, {
+      isPhoneNumberConfirmed: true
+    });
+  }
 }
